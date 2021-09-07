@@ -1,5 +1,5 @@
+import { register, Registry } from 'prom-client';
 import { Metric } from '../metric/Metric';
-// import { Metric } from 'prom-client';
 
 type BaseMetricMapT = Record<string, Metric>
 
@@ -13,6 +13,7 @@ export class PromClient<MetricMapT extends BaseMetricMapT = BaseMetricMapT> {
 
   /*** Public ***/
 
+  public readonly register: Registry = register;
   public readonly metric: MetricMapT = {} as MetricMapT;
 
   public addMetric(key: keyof MetricMapT, metric: Metric) {

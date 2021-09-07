@@ -1,7 +1,19 @@
+import * as sinonLib from 'sinon';
+import * as PromClientModule from 'prom-client';
 import { HistogramMetric } from '../metric';
 import { PromClient } from './PromClient';
 
 describe('PromClient', () => {
+  let sinon: sinonLib.SinonSandbox;
+
+  beforeEach(() => {
+    sinon = sinonLib.createSandbox();
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
   it('adds metric', () => {
     type MetricMap = {
       foo: HistogramMetric,
@@ -39,4 +51,21 @@ describe('PromClient', () => {
 
     expect(client.metricName('fox_bar')).toBe('xyz_fox_bar');
   });
+
+  it('sets up default register', () => {
+    const defaultRegisterMock = {};
+    sinon.stub(PromClientModule, 'register').value(defaultRegisterMock);
+
+    expect(new PromClient().register).toBe(defaultRegisterMock);
+  });
+
+  // it('gets metrics', () => {
+  //    const
+  //      client = new PromClient(),
+  //      metricsRes = {
+  //       foo: 'bar',
+  //      };
+  //
+  //
+  // });
 });

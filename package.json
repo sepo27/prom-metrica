@@ -10,7 +10,7 @@
     "lint:base": "eslint -c ./.eslintrc --ext .ts --ext .js src",
     "lint": "npm run lint:base src",
     "test": "jest -c jest.config.js spec",
-    "prepare": "npm run compile:publish && npm run husky install",
+    "prepare": "npm run compile:publish && npx husky install",
     "prepublishOnly": "npm run lint && npm run test",
     "version": "npm version -m 'v%s'"
   },
@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/sepo27/prom-metrica#readme",
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.0.1",
+    "@types/sinon": "^10.0.2",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
     "eslint": "^7.32.0",
