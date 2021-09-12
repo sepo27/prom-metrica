@@ -1,6 +1,6 @@
 {
   "name": "@sepo27/prom-metrica",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Prometheus metrica tools",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
