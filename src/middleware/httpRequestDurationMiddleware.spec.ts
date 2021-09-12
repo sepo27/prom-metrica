@@ -88,4 +88,26 @@ describe('httpRequestDurationMiddleware()', () => {
       path: reqMock.path,
     }]);
   });
+
+  it('provides options to exclude some endpoints', () => {
+    const
+      metric = new HttpReqDurationMetric({
+        name: 'foo',
+        help: 'bar',
+      }),
+      reqMock = { path: '/metrics' },
+      resMock = { on() {} },
+      resOnSpy = sinon.spy(resMock, 'on'),
+      nextSpy = sinon.spy();
+
+    const middleware = httpRequestDurationMiddleware(metric, {
+      excludeEndpoints: ['/metrics'],
+    });
+
+    // @ts-ignore
+    middleware(reqMock, resMock, nextSpy);
+
+    expect(resOnSpy.callCount).toBe(0);
+    expect(nextSpy.calledOnce).toBeTruthy();
+  });
 });

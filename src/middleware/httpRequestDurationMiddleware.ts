@@ -4,6 +4,7 @@ import { HttpReqDurationMetric } from '../metric/http/HttpReqDurationMetric';
 
 interface Options {
   labels?: (req: Request, res: Response) => object,
+  excludeEndpoints?: string[],
 }
 
 export const httpRequestDurationMiddleware = (metric: HttpReqDurationMetric, options: Options = {}) => (
@@ -11,6 +12,11 @@ export const httpRequestDurationMiddleware = (metric: HttpReqDurationMetric, opt
   res: Response,
   next: NextFunction,
 ) => {
+  if (options.excludeEndpoints && options.excludeEndpoints.indexOf(req.path) > -1) {
+    next();
+    return;
+  }
+
   const observe = metric.startTimer();
 
   res.on('close', () => {
