@@ -1,11 +1,4 @@
-import { PromClient } from './client/PromClient';
-import { metricsHandler } from './handler/metricsHandler';
-import { HttpReqDurationMetric } from './metric/http/HttpReqDurationMetric';
-import { httpRequestDurationMiddleware } from './middleware/httpRequestDurationMiddleware';
+import { HttpHistogramMetric } from './metric/http/histogram/HttpHistogramMetric';
+import { metricsRouter } from './router/metricsRouter';
 
-export {
-  PromClient,
-  HttpReqDurationMetric,
-  httpRequestDurationMiddleware,
-  metricsHandler,
-};
+export { HttpHistogramMetric, metricsRouter };

@@ -1,7 +1,8 @@
 import { Histogram } from 'prom-client';
-import { Metric } from '../Metric';
+import { PromMetric } from './PromMetric';
 
-export class HistogramMetric<LabelT extends string = string> extends Histogram<LabelT> implements Metric {
-  name: string;
-  help: string;
+export class HistogramMetric<LabelT extends string = string> extends Histogram<LabelT> implements PromMetric {
+  readonly name: string;
+  readonly help: string;
+  labelNames: string[] = [];
 }
