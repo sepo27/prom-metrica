@@ -24,12 +24,10 @@ interface Params extends HistogramConfiguration<string> {
 
 const defaultLabelMap: LabelMap = {
   req: {
-    protocol: req => req.protocol,
     method: req => req.method.toUpperCase(),
-    path: req => req.path,
   },
   res: {
-    statusCode: res => res.statusCode,
+    statusCode: res => obfuscateStatusCode(res.statusCode),
   },
 };
 
@@ -85,4 +83,10 @@ export class HttpHistogramMetric extends HistogramMetric implements HttpMetric {
       {},
     );
   }
+}
+
+/*** Lib ***/
+
+function obfuscateStatusCode(code) {
+  return `${code.toString()[0]}xx`;
 }

@@ -20,9 +20,7 @@ describe('HttpHistogramMetric', () => {
     const
       metric = makeMetric(),
       req = {
-        protocol: 'http',
         method: 'get',
-        path: '/foo',
       };
 
     const startTimerSpy = sinon.spy(metric, 'startTimer');
@@ -30,12 +28,10 @@ describe('HttpHistogramMetric', () => {
     // @ts-ignore
     metric.startRequestTimer(req);
 
-    expect(metric.labelNames).toEqual(['protocol', 'method', 'path', 'statusCode']);
+    expect(metric.labelNames).toEqual(['method', 'statusCode']);
     expect(startTimerSpy.calledOnce).toBeTruthy();
     expect(startTimerSpy.getCall(0).args).toEqual([{
-      protocol: 'http',
       method: 'GET',
-      path: '/foo',
     }]);
   });
 
@@ -78,7 +74,6 @@ describe('HttpHistogramMetric', () => {
         mergeLabels: true,
       }),
       req = {
-        protocol: 'http',
         method: 'get',
         path: '/foo',
       };
@@ -88,10 +83,9 @@ describe('HttpHistogramMetric', () => {
     // @ts-ignore
     metric.startRequestTimer(req);
 
-    expect(metric.labelNames).toEqual(['protocol', 'method', 'path', 'foo', 'statusCode']);
+    expect(metric.labelNames).toEqual(['method', 'path', 'foo', 'statusCode']);
     expect(startTimerSpy.calledOnce).toBeTruthy();
     expect(startTimerSpy.getCall(0).args).toEqual([{
-      protocol: 'http',
       method: 'GET',
       path: '/foo/custom',
       foo: 'stuff',
@@ -114,10 +108,10 @@ describe('HttpHistogramMetric', () => {
     // @ts-ignore
     metric.startRequestTimer(req)(res);
 
-    expect(metric.labelNames).toEqual(['protocol', 'method', 'path', 'statusCode']);
+    expect(metric.labelNames).toEqual(['method', 'statusCode']);
     expect(timerSpy.calledOnce).toBeTruthy();
     expect(timerSpy.getCall(0).args).toEqual([{
-      statusCode: res.statusCode,
+      statusCode: '2xx',
     }]);
   });
 
@@ -172,11 +166,11 @@ describe('HttpHistogramMetric', () => {
     // @ts-ignore
     metric.startRequestTimer(req)(res);
 
-    expect(metric.labelNames).toEqual(['protocol', 'method', 'path', 'statusCode', 'foo']);
+    expect(metric.labelNames).toEqual(['method', 'statusCode', 'foo']);
     expect(timerSpy.calledOnce).toBeTruthy();
     expect(timerSpy.getCall(0).args).toEqual([{
       foo: res.status,
-      statusCode: res.statusCode,
+      statusCode: '2xx',
     }]);
   });
 
