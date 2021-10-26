@@ -8,9 +8,10 @@ export const METRICS_DEFAULT_ENDPOINT = '/metrics';
 
 interface Options {
   metricsEndpoint?: string,
+  discardMetricsHandler?: boolean,
 }
 
-export const metricsRouter = (metrics: HttpMetric[], options: Options = {}): Router => {
+export const metricsRouter = (metrics: HttpMetric[], options: Options = {}): [Router, Registry] => {
   // Setup metrics register
 
   const register = new Registry();
@@ -32,8 +33,10 @@ export const metricsRouter = (metrics: HttpMetric[], options: Options = {}): Rou
     excludeEndpoints: [metricsEndpoint],
   }));
 
-  // Attach metrics handler
-  router.get(metricsEndpoint, metricsHandler(register));
+  if (!options.discardMetricsHandler) {
+    // Attach metrics handler
+    router.get(metricsEndpoint, metricsHandler(register));
+  }
 
-  return router;
+  return [router, register];
 };

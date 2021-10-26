@@ -78,7 +78,7 @@ describe('metricsRouter', () => {
     expect(routerUseSpy.getCall(0).args).toEqual([collectorMiddleware]);
   });
 
-  it('attaches metrics handler', () => {
+  it('attaches metrics handler by default', () => {
     const
       metrics = [makeMetric()],
       metricsHandler = () => {};
@@ -123,7 +123,29 @@ describe('metricsRouter', () => {
   });
 
   it('returns router', () => {
-    expect(metricsRouter([])).toBe(router);
+    const [retRouter] = metricsRouter([]);
+
+    expect(retRouter).toBe(router);
+  });
+
+  it('returns metrics registry', () => {
+    const [, retRegister] = metricsRouter([]);
+
+    expect(retRegister).toBe(register);
+  });
+
+  it('discards metrics handler when configured so', () => {
+    const
+      metrics = [makeMetric()],
+      metricsHandler = () => {};
+
+    metricsHandlerStub.returns(metricsHandler);
+
+    metricsRouter(metrics, {
+      discardMetricsHandler: true,
+    });
+
+    expect(metricsHandlerStub.calledOnce).toBeFalsy();
   });
 
   /*** Lib ***/
