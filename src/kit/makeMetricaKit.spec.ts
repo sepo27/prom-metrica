@@ -5,6 +5,7 @@ import * as CollectorMiddlewareModule from '../middleware/collectorMiddleware';
 import * as MetricsHandlerModule from '../handler/metricsHandler';
 import { makeMetricaKit } from './makeMetricaKit';
 import { METRICS_DEFAULT_ENDPOINT } from '../handler/constants';
+import { HistogramMetric } from '../metric/prom/HistogramMetric';
 
 describe('makeMetricaKit()', () => {
   let
@@ -37,8 +38,8 @@ describe('makeMetricaKit()', () => {
 
   it('registers metrics in custom registry', () => {
     const
-      metric1 = makeMetric({ name: 'm1' }),
-      metric2 = makeMetric({ name: 'm2' });
+      metric1 = makeHttpMetric({ name: 'm1' }),
+      metric2 = makeHttpMetric({ name: 'm2' });
 
     makeMetricaKit([metric1, metric2]);
 
@@ -49,7 +50,7 @@ describe('makeMetricaKit()', () => {
 
   it('sets up collector middleware', () => {
     const
-      metrics = [makeMetric()],
+      metrics = [makeHttpMetric()],
       collectorMiddleware = () => {};
 
     collectorMiddlewareStub.returns(collectorMiddleware);
@@ -59,6 +60,23 @@ describe('makeMetricaKit()', () => {
     expect(collectorMiddlewareStub.calledOnce).toBeTruthy();
     expect(collectorMiddlewareStub.getCall(0).args[0]).toEqual(metrics);
     expect(kit.collectorMiddleware).toBe(collectorMiddleware);
+  });
+
+  it('allows non-http metrics', () => {
+    const
+      histogramMetric = new HistogramMetric({
+        name: 'hist',
+        help: 'HistHelp',
+      }),
+      httpMetric = makeHttpMetric(),
+      collectorMiddleware = () => {};
+
+    collectorMiddlewareStub.returns(collectorMiddleware);
+
+    makeMetricaKit([histogramMetric, httpMetric]);
+
+    expect(collectorMiddlewareStub.calledOnce).toBeTruthy();
+    expect(collectorMiddlewareStub.getCall(0).args[0]).toEqual([httpMetric]);
   });
 
   it('excludes default metrics endpoint from collector by default', () => {
@@ -83,7 +101,7 @@ describe('makeMetricaKit()', () => {
 
   it('sets up metrics handler', () => {
     const
-      metrics = [makeMetric()],
+      metrics = [makeHttpMetric()],
       metricsHandler = () => {};
 
     metricsHandlerStub.returns(metricsHandler);
@@ -115,7 +133,7 @@ describe('makeMetricaKit()', () => {
     }
   }
 
-  function makeMetric(params = {}) {
+  function makeHttpMetric(params = {}) {
     return new HttpHistogramMetric({
       name: 'foo',
       help: 'foo',
